@@ -35,19 +35,13 @@ This hands-on project strengthened understanding of **threat detection engineeri
 - **PowerShell & Hydra**  
 ---
 
-## 🏗️ Steps & Setup Overview
-
-> Each step includes related screenshots and explanations.  
-> *(Upload your screenshots in the `screenshots/` folder or to Imgur and link using `![Description](URL)`.)*
-
----
+## 🏗️ Steps:
 
 ### 🖥️ Step 1 – Lab Architecture
 
-**Ref 1: Network Diagram**
-
-The following diagram shows the SOC lab network topology, consisting of Splunk, Windows Server, Client, and Ubuntu machines.  
-Each machine was connected using a NAT + Host-only network for isolation and communication.
+The following diagram provides an overview of the SOC lab environment.
+It includes a Splunk Server, Active Directory Domain Controller, Windows 11 endpoint, Ubuntu Server, and Kali attacker machine, all connected on the same virtual network (192.168.10.0/24).
+Each host contributes logs to Splunk through Sysmon and Splunk Universal Forwarder, while Atomic Red Team and Kali are used to generate realistic attack telemetry.
 
 📸  
 ![Network Diagram](diagrams/network_topology.png)
