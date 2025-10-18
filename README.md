@@ -60,18 +60,6 @@ Logs from Sysmon, Winlogbeat, and Syslog were ingested into Splunk using configu
 
 ---
 
-### 🧩 Step 3 – Sysmon & Winlogbeat Configuration
-
-**Ref 3: Windows Logging Setup**
-
-Sysmon was deployed with a custom configuration to capture detailed process, network, and registry events.  
-Winlogbeat forwarded these logs to Splunk via port `9997`.
-
-📸  
-![Sysmon Logs in Splunk](screenshots/sysmon_event_log.png)
-
----
-
 ### 💥 Step 4 – Simulating Attacks
 
 **Ref 4: Brute Force Simulation**
