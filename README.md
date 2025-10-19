@@ -95,7 +95,7 @@ An SSH/RDP brute-force and Atomic Red Team attack was launched against the Windo
 *The attack produced multiple failed password events.*
 
 
-**Ref 4.2: Atomic Red Team — T1136.001 (Create Account)
+**Ref 4.2: Atomic Red Team — T1136.001 (Create Account)**
 
 A short, controlled Atomic Red Team exercise (technique **T1136.001 — Create Account: Local Account**) was executed. The test used a PowerShell command to create a local account and exercise related activity; the resulting events were ingested into Splunk for verification and tuning.
 
