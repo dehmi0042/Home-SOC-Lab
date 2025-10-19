@@ -44,7 +44,8 @@ It includes a Splunk Server, Active Directory Domain Controller, Windows 11 endp
 Each host contributes logs to Splunk through Sysmon and Splunk Universal Forwarder, while Atomic Red Team and Kali are used to generate realistic attack telemetry.
 
 📸  
-![Network Diagram](diagrams/network_topology.png)
+![Network Diagram](screenshots/setup.png)
+*Network topology of the lab (Splunk, AD, Windows client, Ubuntu attacker).*
 
 ---
 
@@ -52,23 +53,72 @@ Each host contributes logs to Splunk through Sysmon and Splunk Universal Forward
 
 **Ref 2: Splunk Configuration**
 
-Splunk Enterprise (Free Edition) was installed on the main analysis VM.  
-Logs from Sysmon, Winlogbeat, and Syslog were ingested into Splunk using configured inputs.
-
 📸  
-![Splunk Inputs Configuration](screenshots/splunk_inputs.png)
+![Splunk](screenshots/splunk_dashbored.png)
+*Splunk Enterprise web UI — main dashboard.*
+
+Splunk Enterprise successfully installed and running on 192.168.10.10:8000, and collects logs from Sysmon, Winlogbeat, and the Universal Forwarder.
+
+
+![Logs](screenshots/logs_source.png)
+*Configured Splunk inputs to receive event logs*
+
+Windows Sysmon, Winlogbeat, and Linux Syslog sources via Universal Forwarder on port 9997.
+Validation of log ingestion from all endpoints. Splunk indexes confirm receipt of data from Windows 11, Ubuntu Server, and Active Directory hosts
 
 ---
 
 ### 💥 Step 4 – Simulating Attacks
 
-**Ref 4: Brute Force Simulation**
+An SSH/RDP brute-force and Atomic Red Team attack was launched against the Windows Server and Ubuntu Server to generate realistic log data.
 
-An SSH brute-force attack was launched from the Ubuntu attacker machine against the Windows Server to generate realistic log data.  
-The attack produced multiple failed authentication events (Event ID 4625).
+**Ref 4.1: Brute Force RDP Simulation**
 
 📸  
-![Failed Login Events](screenshots/failed_logins.png)
+![attack_command](screenshots/brute_force_attack_rdp.png)
+*Brute Force Attack aginst Windows11 (RDP) using Hydra*
+
+
+![Failed Login Events](screenshots/brute_force_attack_rdp_log.png)
+*The attack produced multiple failed authentication events (Event ID 4625).*
+
+
+**Ref 4.2: Brute Force SSh Simulation**
+
+
+📸  
+![attack Command](screenshots/brute_force_attack_ssh.png)
+*Brute Force Attack aginst Ubuntu server (SSh) using Hydra*
+
+
+![Failed login](screenshots/brute_force_attack_ssh_log.png)
+*The attack produced multiple failed password events.*
+
+
+**Ref 4.2: Atomic Red Team — T1136.001 (Create Account)
+
+A short, controlled Atomic Red Team exercise (technique **T1136.001 — Create Account: Local Account**) was executed. The test used a PowerShell command to create a local account and exercise related activity; the resulting events were ingested into Splunk for verification and tuning.
+
+
+![powershell command](screenshots/atomic_red_team.png)
+*PowerShell command used to execute the Atomic Red Team test (T1136.001).*
+
+**Detected Event Codes:**  
+- **4720** — A user account was created  
+- **4722** — A user account was enabled  
+- **4724** — An attempt was made to reset an account password  
+- **4726** — A user account was deleted
+
+![eventlog](screenshots/atomic_red_team_4720_log.png)
+
+![eventlog](screenshots/atomic_red_team_4722_log.png)
+
+![eventlog](screenshots/atomic_red_team_4724_log.png)
+
+![eventlog](screenshots/atomic_red_team_4726_log.png)
+*Windows Security Event Logs generated during the simulation.*
+
+The test confirmed that account creation and modification activities are properly logged and detectable within the Windows Event Log system and SIEM.
 
 ---
 
