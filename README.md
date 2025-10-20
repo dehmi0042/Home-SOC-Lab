@@ -122,13 +122,70 @@ The test confirmed that account creation and modification activities are properl
 
 ---
 
-### 🚨 Step 5 – Detection Rules & Alerts
+### 🚨 Step 5 – Incident Report
 
-**Ref 5: SPL Detection Query**
+### 1. Brute-Force RDP Attack on Windows
 
-A Splunk SPL rule was created to detect multiple failed login attempts within a short timeframe, triggering a brute-force alert.
+**Date/Time:** 2025-10-18, 22:58  
+**Source:** `192.168.10.20` (Kali)  
+**Target:** `192.168.10.5` (Windows 11, User: `BSmth@myLab.local`)  
+**MITRE ATT&CK Technique:** [T1110.001 – Brute Force: RDP](https://attack.mitre.org/techniques/T1110/001/)  
 
-```spl
-index=security sourcetype=WinEventLog:Security EventCode=4625
-| stats count by Account_Name, IpAddress
-| where count > 5
+**Detection Evidence:**
+- Multiple failed RDP logins detected by Splunk, EventCode `4625`.
+- Alert triggered for excessive failed authentication attempts by account and source IP.
+
+**Response Actions:**
+- Review for successful unauthorized logins.
+- Enforce account lockout policies and enhance password complexity.
+- Investigate affected accounts for signs of compromise.
+
+***
+
+### 2. Brute-Force SSH Attack on Ubuntu
+
+**Date/Time:** 2025-10-19, 20:04  
+**Source:** `192.168.10.20` (Kali)  
+**Target:** `192.168.10.7` (Ubuntu Server, User: `abdul`)  
+**MITRE ATT&CK Technique:** [T1110 – Brute Force](https://attack.mitre.org/techniques/T1110/)  
+
+**Detection Evidence:**
+- Repeated failed SSH login attempts logged in `/var/log/auth.log`.
+- Splunk dashboard flagged login pattern as brute-force; valid credential discovered.
+
+**Response Actions:**
+- Change credentials for affected account immediately.
+- Switch SSH authentication to key-based or implement rate-limiting.
+- Monitor for further attack patterns and block offending sources.
+
+***
+
+### 3. Atomic Red Team – Local Account Creation (Windows)
+
+**Date/Time:** 2025-10-19, 19:35  
+**Source:** Windows PowerShell (Atomic Red Team Test)  
+**Target:** Windows Client (Active Directory environment)  
+**MITRE ATT&CK Technique:** [T1136.001 – Create Account: Local Account](https://attack.mitre.org/techniques/T1136/001/)  
+
+**Detection Evidence:**
+- PowerShell test executed; triggered EventCodes:
+    - `4720` – Account creation
+    - `4722` – Account enabled
+    - `4724` – Password reset
+    - `4726` – Account deletion
+- Events successfully ingested and visualized in Splunk.
+
+**Response Actions:**
+- Confirm monitoring of all account changes in SIEM.
+- Review privilege escalation attempts tied to local accounts.
+- Maintain audit logs and alert on administrative PowerShell use.
+
+***
+
+### Incident Summary Table
+
+| Incident                  | MITRE Technique     | Evidence/EventCodes      | Source → Target         | Response Action           |
+|---------------------------|--------------------|-------------------------|-------------------------|---------------------------|
+| RDP Brute-Force (Win)     | T1110.001 (RDP)    | 4625                    | 10.20 → 10.5            | Lockout, analyze, review  |
+| SSH Brute-Force (Ubuntu)  | T1110 (SSH)        | /var/log/auth.log       | 10.20 → 10.7            | Change pw, enforce keys   |
+| Atomic Create Account     | T1136.001          | 4720,4722,4724,4726     | Win-Client (internal)   | Monitor, restrict abuse   |
